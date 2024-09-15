@@ -1,16 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config(); // For environment variables
+require('dotenv').config(); // Load environment variables
 
 const app = express();
 
 // Middleware
-app.use(cors()); // Allow cross-origin requests (for dev)
-app.use(express.json()); // Parse JSON bodies
+app.use(cors());
+app.use(express.json());
 
 // MongoDB Atlas Connection
-const uri = process.env.MONGO_URI; // Store MongoDB connection string in .env file
+const uri = process.env.MONGO_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => console.log('Connected to MongoDB Atlas'))
 .catch(err => console.error('Error connecting to MongoDB Atlas:', err));
@@ -43,10 +43,7 @@ try {
 }
 });
 
-// Handle preflight (OPTIONS) requests
-app.options('*', cors());
-
-// Root Route (for testing)
+// Root Route
 app.get('/', (req, res) => {
 res.send('Backend is running!');
 });
