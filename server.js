@@ -1,55 +1,32 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config(); // Load environment variables
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
+const port = process.env.PORT || 27017;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-// MongoDB Atlas Connection
-const uri = process.env.MONGO_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => console.log('Connected to MongoDB Atlas'))
-.catch(err => console.error('Error connecting to MongoDB Atlas:', err));
+// Replace the following with your actual MongoDB connection string
+const uri = 'mongodb+srv://kashyapmistry2021:ws7Gqbfgy3*hQZ5@db1cluster1.skf8r.mongodb.net/?retryWrites=true&w=majority&appName=DB1Cluster1';
 
-// Ride Schema and Model
-const rideSchema = new mongoose.Schema({
-pickupLocation: { type: String, required: true },
-destination: { type: String, required: true },
-createdAt: { type: Date, default: Date.now }
-});
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000 // Increase timeout for initial connection
+})
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch(err => console.error('Error connecting to MongoDB Atlas:', err));
 
-const Ride = mongoose.model('Ride', rideSchema);
-
-// POST route to handle new ride requests
-app.post('/api/rides', async (req, res) => {
-try {
-    const { pickupLocation, destination } = req.body;
-
-    if (!pickupLocation || !destination) {
-    return res.status(400).json({ error: 'Pickup location and destination are required' });
-    }
-
-    const newRide = new Ride({ pickupLocation, destination });
-    await newRide.save();
-
-    res.status(201).json({ message: 'Ride saved successfully', ride: newRide });
-} catch (error) {
-    console.error('Error saving ride:', error);
-    res.status(500).json({ error: 'Internal server error' });
-}
-});
-
-// Root Route
+// Define your routes here
 app.get('/', (req, res) => {
-res.send('Backend is running!');
+  res.send('Hello World!');
 });
 
-// Start Server
-const PORT = process.env.PORT || 27017;
-app.listen(PORT, () => {
-console.log(`Server is running on port ${PORT}`);
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`);
 });
