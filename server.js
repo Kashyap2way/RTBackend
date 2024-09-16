@@ -23,18 +23,15 @@ mongoose.connect(mongoURI, {
 .then(() => console.log('Connected to MongoDB Atlas'))
 .catch((err) => console.error('Error connecting to MongoDB:', err));
 
-// Define the Ride schema and model
 const rideSchema = new mongoose.Schema({
-  destination: String,
-  pickup: String,
-  time: {
-    type: Date,
-    default: Date.now,
-  },
+  name: { type: String, required: true, unique: true }, // Primary key for the user's name
+  pickupLocation: { type: String, required: true },
+  destinationLocation: { type: String, required: true },
+  date: { type: Date, default: Date.now }
 });
 
-// Create the Ride model
 const Ride = mongoose.model('Ride', rideSchema);
+
 
 // POST route to handle creating a new ride
 app.post('/api/rides', async (req, res) => {
