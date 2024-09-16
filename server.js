@@ -20,43 +20,40 @@ mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => {
-    console.log('Connected to MongoDB Atlas');
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err.message);
-  });
+.then(() => console.log('Connected to MongoDB Atlas'))
+.catch((err) => console.error('Error connecting to MongoDB:', err));
 
-// Example API route for rides
-app.post('/api/rides', (req, res) => {
-  const { destination, pickup } = req.body;
-
-  if (!destination || !pickup) {
-    return res.status(400).json({ message: 'Destination and Pickup are required' });
-  }
-
-  // Your logic to save the ride to MongoDB
-  const ride = new Ride({
-    destination,
-    pickup,
-  });
-
-  ride.save()
-    .then((savedRide) => {
-      res.status(201).json({
-        message: 'Ride saved successfully',
-        ride: savedRide,
-      });
-    })
-    .catch((err) => {
-      console.error('Error saving ride:', err.message);
-      res.status(500).json({ message: 'Error saving ride' });
-    });
+// Define the Ride schema and model
+const rideSchema = new mongoose.Schema({
+  destination: String,
+  pickup: String,
+  time: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-// Root endpoint to confirm server is working
+// Create the Ride model
+const Ride = mongoose.model('Ride', rideSchema);
+
+// POST route to handle creating a new ride
+app.post('/api/rides', async (req, res) => {
+  try {
+    const newRide = new Ride({
+      destination: req.body.destination,
+      pickup: req.body.pickup,
+    });
+    await newRide.save();  // Save the new ride to the database
+    res.status(201).send(newRide);  // Respond with the newly created ride
+  } catch (err) {
+    console.error('Error saving ride:', err);
+    res.status(500).send('Error saving ride');  // Internal Server Error
+  }
+});
+
+// Health check route to ensure the server is working
 app.get('/', (req, res) => {
-  res.send('API is running');
+  res.send('Server is running and connected to MongoDB');
 });
 
 // Start the server
