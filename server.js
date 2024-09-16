@@ -6,7 +6,7 @@ const app = express();
 const port = 10000; // Use a fixed port number for simplicity
 
 // MongoDB connection string
-const MONGODB_URI = 'mongodb+srv://kashyapmistry2021:ws7Gqbfgy3*hQZ5@db1cluster1.skf8r.mongodb.net/?retry Writes=true&w=majority&appName=DB1Cluster1';
+const MONGODB_URI = 'mongodb+srv://kashyapmistry2021:ws7Gqbfgy3*hQZ5@db1cluster1.skf8r.mongodb.net/?retryWrites=true&w=majority&appName=DB1Cluster1';
 
 // Middleware
 app.use(cors({
