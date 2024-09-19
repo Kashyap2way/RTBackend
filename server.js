@@ -23,18 +23,20 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 const rideSchema = new mongoose.Schema({
   pickup: String,
   destination: String,
-  name: String // Add name field to schema
+  name: String,
+  dateTime: String, // Add a new field for date and time
 });
+
 const Ride = mongoose.model('Ride', rideSchema);
 
 // Routes
 app.post('/api/rides', async (req, res) => {
   try {
-    const { pickup, destination, name } = req.body;
-    if (!pickup || !destination || !name) {
-      return res.status(400).json({ message: 'Pickup, destination, and name are required' });
+    const { pickup, destination, name, dateTime } = req.body;
+    if (!pickup || !destination || !name || !dateTime) {
+      return res.status(400).json({ message: 'Pickup, destination, name, and date/time are required' });
     }
-    const newRide = new Ride({ pickup, destination, name });
+    const newRide = new Ride({ pickup, destination, name, dateTime });
     await newRide.save();
     res.status(201).json(newRide);
   } catch (error) {
